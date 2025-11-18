@@ -24,19 +24,33 @@ backend/
 │       ├── __init__.py
 │       ├── about.py          # About endpoint
 │       └── health.py         # Health check endpoint
-├── requirements.txt          # Python dependencies
-├── pyproject.toml           # Modern Python project config
+├── tests/                    # Test suite
+├── pyproject.toml           # Project metadata and dependencies
+├── Makefile                 # Development commands
 └── README.md                # This file
 ```
 
 ## Requirements
 
 - Python 3.11+
-- pip or uv for package management
+- [uv](https://docs.astral.sh/uv/) for package management (recommended)
 
 ## Setup
 
-### Option 1: Using pip and venv
+### Using uv (recommended)
+
+```bash
+# Navigate to backend directory
+cd backend
+
+# Install dependencies and create virtual environment
+uv sync
+
+# For development dependencies included
+uv sync --all-extras
+```
+
+### Alternative: Using pip and venv
 
 ```bash
 # Navigate to backend directory
@@ -52,40 +66,31 @@ source venv/bin/activate
 # venv\Scripts\activate
 
 # Install dependencies
-pip install -r requirements.txt
+pip install -e .
 
 # For development dependencies
-pip install -r requirements.txt
-```
-
-### Option 2: Using uv (recommended)
-
-```bash
-# Navigate to backend directory
-cd backend
-
-# Create virtual environment and install dependencies
-uv venv
-source .venv/bin/activate  # On Linux/Mac
-# .venv\Scripts\activate  # On Windows
-
-# Install dependencies
-uv pip install -r requirements.txt
+pip install -e ".[dev]"
 ```
 
 ## Running the Application
 
 ### Development Mode
 
+Using uv (recommended):
+```bash
+# From the backend directory
+uv run python -m app.main
+```
+
+Or with traditional virtual environment:
 ```bash
 # From the backend directory with activated virtual environment
 python -m app.main
 ```
 
 Or using uvicorn directly:
-
 ```bash
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 The API will be available at:
@@ -97,7 +102,7 @@ The API will be available at:
 ### Production Mode
 
 ```bash
-uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
+uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
 ```
 
 ## API Endpoints
@@ -135,34 +140,34 @@ Returns information about the application.
 
 Format code with Black:
 ```bash
-black app/
+uv run black app/
 ```
 
 Lint with Ruff:
 ```bash
-ruff check app/
+uv run ruff check app/
 ```
 
 Type check with mypy:
 ```bash
-mypy app/
+uv run mypy app/
 ```
 
 Security scan with Bandit:
 ```bash
-bandit -r app/
+uv run bandit -r app/
 ```
 
 ### Testing
 
 Run tests with pytest:
 ```bash
-pytest
+uv run pytest
 ```
 
 With coverage report:
 ```bash
-pytest --cov=app --cov-report=html
+uv run pytest --cov=app --cov-report=html
 ```
 
 ## Environment Configuration

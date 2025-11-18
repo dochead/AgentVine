@@ -5,26 +5,19 @@ set -e
 
 echo "Starting AgentVine Backend..."
 
-# Check if virtual environment exists
-if [ ! -d "venv" ] && [ ! -d ".venv" ]; then
-    echo "No virtual environment found. Creating one..."
-    python -m venv venv
-    echo "Virtual environment created."
-fi
-
-# Activate virtual environment
-if [ -d "venv" ]; then
-    source venv/bin/activate
-elif [ -d ".venv" ]; then
-    source .venv/bin/activate
+# Check if uv is installed
+if ! command -v uv &> /dev/null; then
+    echo "Error: uv is not installed. Please install it first:"
+    echo "  curl -LsSf https://astral.sh/uv/install.sh | sh"
+    exit 1
 fi
 
 # Install dependencies if needed
-if ! python -c "import fastapi" 2>/dev/null; then
+if [ ! -d ".venv" ] || ! python -c "import fastapi" 2>/dev/null; then
     echo "Installing dependencies..."
-    pip install -r requirements.txt
+    uv sync
 fi
 
 # Run the application
 echo "Starting FastAPI server on port 8000..."
-python -m app.main
+uv run python -m app.main

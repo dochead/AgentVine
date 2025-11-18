@@ -3,8 +3,8 @@
 help:
 	@echo "AgentVine Backend - Available Commands"
 	@echo "======================================="
-	@echo "install      - Install production dependencies"
-	@echo "dev          - Install development dependencies"
+	@echo "install      - Install production dependencies (uv sync)"
+	@echo "dev          - Install development dependencies (uv sync --all-extras)"
 	@echo "run          - Run the development server"
 	@echo "test         - Run tests with coverage"
 	@echo "lint         - Run ruff linter"
@@ -14,33 +14,35 @@ help:
 	@echo "clean        - Remove cache and build files"
 
 install:
-	pip install -r requirements.txt
+	uv sync
 
 dev:
-	pip install -r requirements.txt
+	uv sync --all-extras
 
 run:
-	python -m app.main
+	uv run python -m app.main
 
 test:
-	pytest --cov=app --cov-report=term-missing --cov-report=html
+	uv run pytest --cov=app --cov-report=term-missing --cov-report=html
 
 lint:
-	ruff check app/ tests/
+	uv run ruff check app/ tests/
 
 format:
-	black app/ tests/
+	uv run black app/ tests/
 
 type-check:
-	mypy app/
+	uv run mypy app/
 
 security:
-	bandit -r app/
+	uv run bandit -r app/
 
 clean:
 	find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
 	find . -type d -name ".pytest_cache" -exec rm -rf {} + 2>/dev/null || true
 	find . -type d -name ".mypy_cache" -exec rm -rf {} + 2>/dev/null || true
 	find . -type d -name "htmlcov" -exec rm -rf {} + 2>/dev/null || true
+	find . -type d -name ".uv_cache" -exec rm -rf {} + 2>/dev/null || true
 	find . -type f -name ".coverage" -delete 2>/dev/null || true
 	find . -type f -name "*.pyc" -delete 2>/dev/null || true
+	rm -rf .venv dist *.egg-info

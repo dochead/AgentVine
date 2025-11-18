@@ -4,11 +4,18 @@
 
 ### 1. Install Dependencies
 
+Using uv (recommended):
+```bash
+cd backend
+uv sync
+```
+
+Using pip (alternative):
 ```bash
 cd backend
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install -r requirements.txt
+pip install -e ".[dev]"
 ```
 
 ### 2. Run the Server
@@ -17,11 +24,14 @@ pip install -r requirements.txt
 # Option 1: Using the run script
 ./run.sh
 
-# Option 2: Using Python directly
-python -m app.main
+# Option 2: Using uv run (recommended)
+uv run python -m app.main
 
-# Option 3: Using uvicorn
-uvicorn app.main:app --reload
+# Option 3: Using uvicorn with uv
+uv run uvicorn app.main:app --reload
+
+# Option 4: Traditional method (with activated venv)
+python -m app.main
 ```
 
 ### 3. Test the API
@@ -34,25 +44,29 @@ Open your browser and visit:
 ### 4. Run Tests
 
 ```bash
+# Using uv (recommended)
+uv run pytest
+
+# Or with traditional venv
 pytest
 ```
 
 ## Common Commands
 
 ```bash
-# Using Makefile
-make install      # Install dependencies
-make run         # Run server
-make test        # Run tests
-make format      # Format code
-make lint        # Check code quality
+# Using Makefile (uses uv internally)
+make install      # Install dependencies (uv sync)
+make run         # Run server (uv run)
+make test        # Run tests (uv run pytest)
+make format      # Format code (uv run black)
+make lint        # Check code quality (uv run ruff)
 
-# Manual commands
-python -m pytest                    # Run tests
-black app/ tests/                   # Format code
-ruff check app/ tests/              # Lint code
-mypy app/                           # Type check
-bandit -r app/                      # Security scan
+# Manual commands with uv
+uv run pytest                    # Run tests
+uv run black app/ tests/         # Format code
+uv run ruff check app/ tests/    # Lint code
+uv run mypy app/                 # Type check
+uv run bandit -r app/            # Security scan
 ```
 
 ## API Endpoints
@@ -104,8 +118,8 @@ backend/
 ├── tests/                 # Test suite
 │   ├── test_health.py     # Health endpoint tests
 │   └── test_about.py      # About endpoint tests
-├── requirements.txt       # Dependencies
-└── pyproject.toml        # Project configuration
+├── pyproject.toml        # Project metadata & dependencies
+└── Makefile              # Development commands
 ```
 
 ## Next Steps
@@ -124,15 +138,18 @@ backend/
 lsof -ti:8000 | xargs kill -9
 
 # Or use a different port
-uvicorn app.main:app --port 8001
+uv run uvicorn app.main:app --port 8001
 ```
 
 **Module not found errors?**
 ```bash
-# Make sure you're in the backend directory and venv is activated
+# Make sure you're in the backend directory and dependencies are installed
 cd backend
+uv sync
+
+# Or with traditional pip
 source venv/bin/activate
-pip install -r requirements.txt
+pip install -e ".[dev]"
 ```
 
 **Import errors?**
