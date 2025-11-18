@@ -11,6 +11,7 @@ from app import __version__
 from app.core.config import settings
 from app.routers import (
     about_router,
+    chat_router,
     health_router,
     queue_router,
     sessions_router,
@@ -44,6 +45,7 @@ app.include_router(tasks_router, prefix=settings.API_V1_PREFIX)
 app.include_router(workers_router, prefix=settings.API_V1_PREFIX)
 app.include_router(sessions_router, prefix=settings.API_V1_PREFIX)
 app.include_router(queue_router, prefix=settings.API_V1_PREFIX)
+app.include_router(chat_router, prefix=settings.API_V1_PREFIX)
 
 
 @app.on_event("startup")

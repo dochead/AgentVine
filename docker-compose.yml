@@ -102,6 +102,18 @@ services:
       - worker3_data:/workspace
     command: python -m workers.main --name worker-3 --api-url http://backend:8000 --redis-url redis://redis:6379/0
 
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    environment:
+      - VITE_API_URL=http://localhost:8000
+
 volumes:
   # postgres_data:
   redis_data:
