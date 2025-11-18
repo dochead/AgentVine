@@ -27,6 +27,13 @@ class MessageType(str, enum.Enum):
     ERROR = "error"
 
 
+class MessageDirection(str, enum.Enum):
+    """Direction of message flow."""
+
+    WORKER_TO_HUMAN = "worker_to_human"
+    HUMAN_TO_WORKER = "human_to_worker"
+
+
 class ChatMessage(Base):
     """Chat message for worker-human communication."""
 
