@@ -29,12 +29,13 @@ Implement session lifecycle management that:
 - Terminates sessions based on configurable policies (max idle time, task completion, resource limits)
 
 ### 4. Human Chat Interface (Pass-Through)
-Build a real-time chat interface that:
+Build a chat interface with polling-based updates that:
 - Displays all worker requests and questions
 - Allows humans to respond directly to workers
 - Shows current system state (active workers, queue depth, session mappings)
 - Provides visibility into all worker-controller interactions
 - **Initially handles ALL routing decisions** (no automated LLM responses)
+- **Uses polling (not WebSocket)** for simplicity - checks for updates every few seconds
 
 ### 5. Basic Task Management
 Provide essential task management capabilities:
@@ -54,14 +55,15 @@ The following features are **deferred to later phases**:
 - ❌ **Multi-Repository Support**: Single repository focus initially
 - ❌ **Worker Specialization**: Basic worker types only
 - ❌ **Advanced Monitoring**: Basic health checks only
+- ❌ **WebSocket Real-Time Updates**: Using simple polling instead for Phase 1 simplicity
 
 ## System Architecture (Phase 1)
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                  Human Chat Interface                       │
-│              (React + WebSocket + Shad.cn)                  │
-│  - Display worker requests                                  │
+│               (React + Polling + Shad.cn)                   │
+│  - Display worker requests (poll every 2-3 seconds)        │
 │  - Accept human responses                                   │
 │  - Show queue and worker status                             │
 └────────────────────┬────────────────────────────────────────┘
