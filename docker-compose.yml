@@ -1,0 +1,111 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database (can use SQLite for dev, but this is for production-like setup)
+  # postgres:
+  #   image: postgres:16-alpine
+  #   environment:
+  #     POSTGRES_USER: agentvine
+  #     POSTGRES_PASSWORD: dev_password
+  #     POSTGRES_DB: agentvine
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U agentvine"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+
+  # Redis Queue
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    command: redis-server --appendonly yes
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite+aiosqlite:////data/agentvine.db
+      - REDIS_URL=redis://redis:6379/0
+      - DB_ECHO=false
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+      - backend_data:/data
+    command: python -m app.main
+
+  # Worker 1
+  worker-1:
+    build:
+      context: ./workers
+      dockerfile: Dockerfile
+    environment:
+      - WORKER_NAME=worker-1
+      - API_URL=http://backend:8000
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - backend
+      - redis
+    volumes:
+      - ./workers:/app
+      - worker1_data:/workspace
+    command: python -m workers.main --name worker-1 --api-url http://backend:8000 --redis-url redis://redis:6379/0
+
+  # Worker 2
+  worker-2:
+    build:
+      context: ./workers
+      dockerfile: Dockerfile
+    environment:
+      - WORKER_NAME=worker-2
+      - API_URL=http://backend:8000
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - backend
+      - redis
+    volumes:
+      - ./workers:/app
+      - worker2_data:/workspace
+    command: python -m workers.main --name worker-2 --api-url http://backend:8000 --redis-url redis://redis:6379/0
+
+  # Worker 3
+  worker-3:
+    build:
+      context: ./workers
+      dockerfile: Dockerfile
+    environment:
+      - WORKER_NAME=worker-3
+      - API_URL=http://backend:8000
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - backend
+      - redis
+    volumes:
+      - ./workers:/app
+      - worker3_data:/workspace
+    command: python -m workers.main --name worker-3 --api-url http://backend:8000 --redis-url redis://redis:6379/0
+
+volumes:
+  # postgres_data:
+  redis_data:
+  backend_data:
+  worker1_data:
+  worker2_data:
+  worker3_data:
