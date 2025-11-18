@@ -14,7 +14,7 @@ dependencies = [
     "pydantic-settings==2.1.0",
     "sqlalchemy[asyncio]==2.0.25",
     "alembic==1.13.1",
-    "asyncpg==0.29.0",
+    "asyncpg>=0.30.0",
     "redis==5.0.1",
     "rq==1.16.1",
     "websockets==12.0",
