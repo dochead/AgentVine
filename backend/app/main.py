@@ -8,7 +8,16 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app import __version__
-from app.routers import about_router, health_router
+from app.core.config import settings
+from app.routers import (
+    about_router,
+    chat_router,
+    health_router,
+    queue_router,
+    sessions_router,
+    tasks_router,
+    workers_router,
+)
 
 # Create FastAPI application instance
 app = FastAPI(
@@ -23,12 +32,7 @@ app = FastAPI(
 # Configure CORS middleware for frontend connectivity
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",  # React default dev server
-        "http://localhost:5173",  # Vite default dev server
-        "http://127.0.0.1:3000",
-        "http://127.0.0.1:5173",
-    ],
+    allow_origins=settings.CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -37,6 +41,11 @@ app.add_middleware(
 # Register routers
 app.include_router(health_router)
 app.include_router(about_router)
+app.include_router(tasks_router, prefix=settings.API_V1_PREFIX)
+app.include_router(workers_router, prefix=settings.API_V1_PREFIX)
+app.include_router(sessions_router, prefix=settings.API_V1_PREFIX)
+app.include_router(queue_router, prefix=settings.API_V1_PREFIX)
+app.include_router(chat_router, prefix=settings.API_V1_PREFIX)
 
 
 @app.on_event("startup")
