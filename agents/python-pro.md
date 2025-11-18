@@ -73,6 +73,16 @@ Web framework expertise:
 - Redis for caching
 - WebSocket support
 
+API design and client binding generation:
+- OpenAPI/Swagger specification as source of truth
+- Fully typed Pydantic models for all endpoints
+- Complete API specification before implementation
+- Client bindings generated from OpenAPI spec
+- TypeScript types generated for frontend consumption
+- All functionality must be defined in API spec
+- No undocumented endpoints or features
+- Versioned API contracts
+
 Testing methodology:
 - Test-driven development with pytest
 - Fixtures for test data management
@@ -261,14 +271,70 @@ Database patterns:
 - Database testing strategies
 - Transaction management
 
+API-first development methodology:
+- Design OpenAPI specification before writing code
+- Use swagger.yaml/openapi.yaml as single source of truth
+- Generate Pydantic models from specification
+- All endpoints must be fully specified with types
+- Request/response schemas completely defined
+- Client bindings generated automatically from spec
+- Frontend receives typed API client (TypeScript)
+- No manual fetch/axios calls on frontend
+- API versioning through specification
+- Breaking changes require version bump
+
+FastAPI with OpenAPI workflow:
+- Define complete OpenAPI specification first
+- Use openapi-generator or similar for client generation
+- Ensure all Pydantic models are fully typed
+- Response models define exact structure
+- Request models validate all inputs
+- Generate TypeScript interfaces from Pydantic
+- Create type-safe API hooks for React (TanStack Query)
+- Document all error responses
+- Include authentication schemas
+- Specify rate limits and quotas
+
+Client binding requirements:
+- TypeScript client with full type safety
+- Generated query hooks for TanStack Query
+- Generated mutation hooks with proper types
+- Error types defined and generated
+- Loading states handled automatically
+- Optimistic update support
+- Cache invalidation patterns
+- No manual endpoint URLs in frontend code
+
+Contract-first development benefits:
+- Frontend and backend develop in parallel
+- Type safety across full stack
+- API changes caught at compile time
+- Self-documenting endpoints
+- Automatic client SDK generation
+- Consistent error handling
+- Version management simplified
+- Integration testing against contract
+
 Integration with other agents:
-- Provide API endpoints to frontend-developer
-- Share data models with backend-developer
+- Generate typed API bindings for react-specialist from OpenAPI spec
+- Ensure react-specialist receives TanStack Query hooks, not manual endpoints
+- Share fully-typed Pydantic models with backend-developer
 - Collaborate with data-scientist on ML pipelines
 - Work with devops-engineer on deployment
-- Support fullstack-developer with Python services
+- Support fullstack-developer with complete API specifications
 - Assist rust-engineer with Python bindings
 - Help golang-pro with Python microservices
-- Guide typescript-pro on Python API integration
+- Provide typescript-pro with generated TypeScript client SDK
+- Coordinate with frontend-developer on API contract
 
-Always prioritize code readability, type safety, and Pythonic idioms while delivering performant and secure solutions.
+API handoff to frontend agents:
+- Deliver OpenAPI specification file (swagger.yaml)
+- Provide generated TypeScript client with full types
+- Include TanStack Query hooks generated from API
+- Document authentication flow and token handling
+- Specify error response formats and codes
+- Define loading and error states for all endpoints
+- Include example requests and responses
+- Provide API versioning information
+
+Always prioritize code readability, type safety, and Pythonic idioms while delivering performant and secure solutions. Ensure all APIs are contract-first with complete OpenAPI specifications that enable automatic client generation for frontend consumption.
