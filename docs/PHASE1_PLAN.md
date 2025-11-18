@@ -371,49 +371,46 @@ Phase 1 is considered complete when:
 
 ## Phase 1 Implementation Order
 
-### Week 1-2: Foundation
-1. ✅ Backend project structure
-2. ✅ Database models (tasks, workers, sessions, work_orders)
-3. ✅ Alembic migrations
-4. ✅ Redis connection and RQ setup
-5. ✅ Basic API endpoints (tasks, workers, queue)
+**Realistic Timeline: 1-2 Days**
 
-### Week 3-4: Queue System
-1. ✅ Queue manager service
-2. ✅ Work order enqueue/claim logic
-3. ✅ Worker request/response queues
-4. ✅ Retry and dead letter queue
-5. ✅ Queue monitoring endpoints
+Most of Phase 1 is standard web application boilerplate that can be implemented rapidly. The only complex integration is with headless Claude Code instances.
 
-### Week 5-6: Worker System
-1. ✅ Worker base class
-2. ✅ Queue polling mechanism
-3. ✅ Task execution logic
-4. ✅ Clarification request flow
-5. ✅ Heartbeat mechanism
-6. ✅ Docker containerization
+### Day 1: Core System (6-8 hours)
 
-### Week 7-8: Event Orchestrator
-1. ✅ Session manager (mapping + lifecycle)
-2. ✅ Message receiver (poll worker_requests)
-3. ✅ Pass-through router (forward to chat)
-4. ✅ Response dispatcher (forward to workers)
-5. ✅ Session keep-alive policies
+**Backend Foundation (2-3 hours)**
+- Database models (tasks, workers, sessions, work_orders, chat_messages)
+- Alembic migrations (auto-generated)
+- Core API endpoints (tasks, workers, queue, sessions, chat)
+- Redis/RQ queue manager service
 
-### Week 9-10: Chat Interface
-1. ✅ Frontend project setup (React + Vite)
-2. ✅ WebSocket connection
-3. ✅ Chat UI (message list, input, send)
-4. ✅ Worker status dashboard
-5. ✅ Session monitoring view
-6. ✅ Task list and creation UI
+**Worker & Orchestrator (3-4 hours)**
+- Worker base class with polling loop
+- Queue claim logic (atomic operations)
+- Event orchestrator with session management
+- Pass-through router (worker requests → chat, responses → workers)
+- Heartbeat mechanism
 
-### Week 11-12: Integration & Testing
-1. ✅ End-to-end testing
-2. ✅ Multi-worker testing (3+ workers)
-3. ✅ Session lifecycle testing
-4. ✅ Performance testing (queue throughput)
-5. ✅ Documentation and deployment guides
+**Testing & Integration (1-2 hours)**
+- Basic unit tests for queue operations
+- Integration test for full workflow
+- Docker compose setup
+
+### Day 2: Frontend & Polish (4-6 hours)
+
+**Frontend (3-4 hours)**
+- React + Vite setup with WebSocket
+- Chat interface (message list, input, real-time updates)
+- Dashboard (worker status, queue depth, sessions)
+- Task list and creation UI
+
+**End-to-End Testing (1-2 hours)**
+- Multi-worker test (3+ workers)
+- Full workflow validation
+- Basic deployment documentation
+
+### What Takes Actual Time?
+
+The only genuinely time-consuming part is **integrating with headless Claude Code**, which is external tooling that needs experimentation. Everything else is standard patterns.
 
 ## Phase 1 Deployment
 
@@ -541,8 +538,20 @@ After Phase 1 is complete and stable, Phase 2 will introduce:
 - Mitigation: Aggressive session termination policies
 - Monitoring: Alert if active sessions > threshold
 
+## Implementation Philosophy
+
+Phase 1 is intentionally **simple and direct**:
+- No over-engineering
+- Standard patterns (FastAPI, RQ, React)
+- Minimal abstractions
+- Focus on getting the core loop working
+
+The complexity is not in the implementation—it's in the **design decisions** about session management and worker coordination. Once those are clear (which they are), implementation is straightforward.
+
 ## Conclusion
 
-Phase 1 delivers a **functional multi-worker orchestration system** with human oversight. It establishes the foundation for queue-based coordination, session management, and worker lifecycle while deferring complex LLM decision-making to later phases.
+Phase 1 delivers a **functional multi-worker orchestration system** with human oversight in 1-2 days of focused implementation. It establishes the foundation for queue-based coordination, session management, and worker lifecycle while deferring complex LLM decision-making to later phases.
 
 **Success = Multiple workers executing tasks concurrently, coordinated through queues, with humans providing guidance through a real-time chat interface.**
+
+**Timeline Reality Check**: This is ~1500-2000 lines of Python and ~800-1000 lines of TypeScript/React—very achievable in a day or two with AI assistance.
